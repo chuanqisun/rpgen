@@ -5,9 +5,10 @@ import { defineHideBar } from "./nodes/hide-node";
 import { defineSettingsNode } from "./nodes/settings-node";
 
 export function loadAIBar() {
+  // load container first to set internal event handlers
+  defineAIBar();
+
   defineSettingsNode();
   defineHideBar();
   defineDragNode();
-
-  defineAIBar();
 }

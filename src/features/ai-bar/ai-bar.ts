@@ -31,7 +31,7 @@ export class AIBar extends HTMLElement {
 
   connectedCallback() {
     this.querySelector("script")?.remove();
-    this.querySelectorAll(`[provides*="toolbar-item"]`).forEach((el) => el.setAttribute("slot", "toolbar"));
+    [...this.children].forEach((el) => el.setAttribute("slot", "toolbar"));
 
     this.addEventListener(internalEventName, (event) => {
       const typedEvent = event as CustomEvent<InternalEventDetails>;
