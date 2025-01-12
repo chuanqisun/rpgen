@@ -5,8 +5,6 @@ export class HideNode extends HTMLElement {
   shadowRoot = attachShadowHtml(this, `<button style="font-size: 16px" title="Hide">🙈</button>`);
 
   connectedCallback() {
-    this.setAttribute("provides", "toolbar-item");
-
     this.shadowRoot.querySelector("button")?.addEventListener("click", () => {
       this.dispatchEvent(new CustomEvent(internalEventName, { detail: { hide: true }, bubbles: true }));
     });

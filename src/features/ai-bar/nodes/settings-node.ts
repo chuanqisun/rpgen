@@ -1,4 +1,5 @@
 import { attachShadowHtml } from "../shared/attach-html";
+import { persistForm } from "../shared/persist-form";
 
 export class SettingsNode extends HTMLElement {
   shadowRoot = attachShadowHtml(
@@ -52,30 +53,12 @@ export class SettingsNode extends HTMLElement {
   );
 
   connectedCallback() {
-    this.setAttribute("provides", "toolbar-item");
     this.shadowRoot.querySelector("button")?.addEventListener("click", () => {
       this.shadowRoot.querySelector("dialog")?.showModal();
     });
 
     const credsForm = this.shadowRoot.querySelector<HTMLFormElement>("#creds-form")!;
-
-    credsForm.addEventListener("change", () => {
-      const formData = new FormData(credsForm);
-      const dataEntries = formData.entries();
-      const dataDict = Object.fromEntries(dataEntries);
-      localStorage.setItem("creds", JSON.stringify(dataDict));
-      handleCredsChange(dataDict as Record<string, string>);
-    });
-    // immediately load creds from local storage at the start
-    handleCredsChange(JSON.parse(localStorage.getItem("creds") ?? "{}"));
-
-    async function handleCredsChange(creds: Record<string, string>) {
-      Object.entries(creds).forEach(([key, value]) => {
-        const field = credsForm.querySelector(`[name="${key}"]`) as HTMLInputElement;
-        if (!field) return;
-        field.value = value as string;
-      });
-    }
+    persistForm(credsForm, "settingsNode.creds");
   }
 
   public getSettings() {
