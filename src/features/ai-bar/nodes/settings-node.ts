@@ -1,6 +1,14 @@
 import { attachShadowHtml } from "../shared/attach-html";
 import { persistForm } from "../shared/persist-form";
 
+export interface Settings {
+  aoaiEndpoint: string;
+  aoaiKey: string;
+  openaiKey: string;
+  azureSpeechRegion: string;
+  azureSpeechKey: string;
+}
+
 export class SettingsNode extends HTMLElement {
   shadowRoot = attachShadowHtml(
     this,
@@ -30,21 +38,21 @@ export class SettingsNode extends HTMLElement {
   <h2>Azure OpenAI Connection</h2>
   <form method="dialog" id="creds-form">
     <div class="two-column">
-      <label for="aoai-endpoint">AOAI Endpoint</label>
-      <input type="url" id="aoai-endpoint" name="aoai-endpoint"
+      <label for="aoaiEndpoint">AOAI Endpoint</label>
+      <input type="url" id="aoaiEndpoint" name="aoaiEndpoint"
         placeholder="https://replace-endpoint-name.openai.azure.com/" />
 
-      <label for="aoai-key">AOAI Key</label>
-      <input type="password" id="aoai-key" name="aoai-key" />
+      <label for="aoaiKey">AOAI Key</label>
+      <input type="password" id="aoaiKey" name="aoaiKey" />
 
-      <label for="openai-key">OpenAI Key</label>
-      <input type="password" id="openai-key" name="openai-key" />
+      <label for="openaiKey">OpenAI Key</label>
+      <input type="password" id="openaiKey" name="openaiKey" />
 
-      <label for="speech-region">Azure Speech region</label>
-      <input type="text" id="speech-region" name="speech-region" placeholder="eastus" />
+      <label for="azureSpeechRegion">Azure Speech region</label>
+      <input type="text" id="azureSpeechRegion" name="azureSpeechRegion" placeholder="eastus" />
 
-      <label for="speech-key">Azure Speech key</label>
-      <input type="password" id="speech-key" name="speech-key" />
+      <label for="azureSpeechKey">Azure Speech key</label>
+      <input type="password" id="azureSpeechKey" name="azureSpeechKey" />
     </div>
     <button>Done</button>
   </form>
@@ -62,29 +70,18 @@ export class SettingsNode extends HTMLElement {
   }
 
   public getSettings() {
-    const aoaiEndpoint = this.shadowRoot.querySelector<HTMLInputElement>("#aoai-endpoint")?.value ?? "";
-    const aoaiDeploymentName = this.shadowRoot.querySelector<HTMLInputElement>("#aoai-deployment-name")?.value ?? "";
-    const aoaiKey = this.shadowRoot.querySelector<HTMLInputElement>("#aoai-key")?.value ?? "";
-    const openaiKey = this.shadowRoot.querySelector<HTMLInputElement>("#openai-key")?.value ?? "";
-    const togetherAIKey = this.shadowRoot.querySelector<HTMLInputElement>("#together-ai-key")?.value ?? "";
-    const googleAIKey = this.shadowRoot.querySelector<HTMLInputElement>("#googleai-key")?.value ?? "";
-    const mapKey = this.shadowRoot.querySelector<HTMLInputElement>("#map-key")?.value ?? "";
-    const speechRegion = this.shadowRoot.querySelector<HTMLInputElement>("#speech-region")?.value ?? "";
-    const speechKey = this.shadowRoot.querySelector<HTMLInputElement>("#speech-key")?.value ?? "";
-    const elevenLabsKey = this.shadowRoot.querySelector<HTMLInputElement>("#eleven-labs-key")?.value ?? "";
-
-    return {
-      mapKey,
-      aoaiEndpoint,
-      aoaiDeploymentName,
-      aoaiKey,
-      googleAIKey,
-      togetherAIKey,
-      openaiKey,
-      speechRegion,
-      speechKey,
-      elevenLabsKey,
-    };
+    const credsForm = this.shadowRoot.querySelector<HTMLFormElement>("#creds-form")!;
+    return Object.fromEntries(
+      [...credsForm.elements]
+        .map((el) => {
+          if (el instanceof HTMLInputElement) {
+            return [el.name, el.value];
+          } else {
+            return null;
+          }
+        })
+        .filter((el): el is [string, string] => el !== null)
+    ) as any as Settings;
   }
 }
 
