@@ -1,4 +1,5 @@
 import { attachShadowHtml } from "./shared/attach-html";
+import { internalEventName, type InternalEventDetails } from "./shared/internal-events";
 
 export class AIBar extends HTMLElement {
   shadowRoot = attachShadowHtml(
@@ -32,26 +33,14 @@ export class AIBar extends HTMLElement {
     this.querySelector("script")?.remove();
     this.querySelectorAll(`[provides*="toolbar-item"]`).forEach((el) => el.setAttribute("slot", "toolbar"));
 
-    this.addEventListener("event", (event) => {
-      const typedEvent = event as CustomEvent;
+    this.addEventListener(internalEventName, (event) => {
+      const typedEvent = event as CustomEvent<InternalEventDetails>;
       this.handleDragged(typedEvent);
       this.handleHide(typedEvent);
     });
-
-    if (this.hasAttribute("auto-hide")) {
-      const cancel = setTimeout(() => {
-        this.style.display = "none";
-      }, 3000);
-
-      this.addEventListener("click", () => clearTimeout(cancel));
-    }
-
-    if (this.hasAttribute("hidden")) {
-      this.style.display = "none";
-    }
   }
 
-  private handleDragged(typedEvent: CustomEvent) {
+  private handleDragged(typedEvent: CustomEvent<InternalEventDetails>) {
     if (!typedEvent.detail.dragged) return;
     typedEvent.stopPropagation();
 
@@ -59,11 +48,9 @@ export class AIBar extends HTMLElement {
     this.style.setProperty("--offsetY", typedEvent.detail.dragged.deltaY + "px");
   }
 
-  private handleHide(typedEvent: CustomEvent) {
+  private handleHide(typedEvent: CustomEvent<InternalEventDetails>) {
     if (!typedEvent.detail.hide) return;
     typedEvent.stopPropagation();
-    this.dispatchEvent(new CustomEvent("hide"));
-
     this.style.display = "none";
   }
 }
