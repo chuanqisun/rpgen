@@ -35,7 +35,6 @@ export class SettingsNode extends HTMLElement {
 </style>
 <button title="Setup">⚙️</button>
 <dialog style="width: min(40rem, calc(100vw - 32px))">
-  <h2>Azure OpenAI Connection</h2>
   <form method="dialog" id="creds-form">
     <div class="two-column">
       <label for="aoaiEndpoint">AOAI Endpoint</label>
