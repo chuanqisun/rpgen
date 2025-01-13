@@ -2,6 +2,7 @@ import { loadAIBar } from "./features/ai-bar/loader";
 import { AzureSttNode } from "./features/ai-bar/nodes/azure-stt-node";
 import type { AzureTtsNode } from "./features/ai-bar/nodes/azure-tts-node";
 import type { OpenAILlmNode } from "./features/ai-bar/nodes/openai-llm-node";
+import type { WebSttNode } from "./features/ai-bar/nodes/web-stt-node";
 import type { WebTtsNode } from "./features/ai-bar/nodes/web-tts-node";
 import { sttRecognizedEbentName, type SttRecognizedEventDetails } from "./features/ai-bar/shared/stt";
 import { user } from "./features/llm/message";
@@ -34,6 +35,31 @@ document.querySelector<HTMLButtonElement>(`[data-action="test-azure-stt"]`)?.add
     const stt = document.querySelector<AzureSttNode>("azure-stt-node")!;
     await stt.startMicrophone();
     const trigger = document.querySelector<HTMLButtonElement>(`[data-action="test-azure-stt"]`)!;
+    trigger.textContent = "Hold to speak";
+
+    trigger.addEventListener("mousedown", async () => {
+      trigger.textContent = "Release to send";
+      stt?.start();
+    });
+
+    trigger.addEventListener("mouseup", async () => {
+      trigger.textContent = "Hold to speak";
+      stt?.stop();
+    });
+
+    stt.addEventListener(sttRecognizedEbentName, (e) => {
+      const detail = (e as CustomEvent<SttRecognizedEventDetails>).detail;
+      console.log(detail);
+    });
+  },
+  { once: true }
+);
+
+document.querySelector<HTMLButtonElement>(`[data-action="test-web-stt"]`)?.addEventListener(
+  "click",
+  async () => {
+    const stt = document.querySelector<WebSttNode>("web-stt-node")!;
+    const trigger = document.querySelector<HTMLButtonElement>(`[data-action="test-web-stt"]`)!;
     trigger.textContent = "Hold to speak";
 
     trigger.addEventListener("mousedown", async () => {
