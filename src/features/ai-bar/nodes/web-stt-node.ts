@@ -34,12 +34,20 @@ export class WebSttNode extends HTMLElement {
     };
     this.recognition.onerror = (e) => {
       console.error(`[recognition] sliently omit error`, e);
+      this.isStarted = false;
+      if (this.recognition.continuous) {
+        this.initSession();
+        this.start();
+      }
     };
     this.recognition.onend = () => {
       this.isStarted = false;
       this.recognition.stop();
       console.log("[recognition] session ended");
-      if (this.recognition.continuous) this.initSession();
+      if (this.recognition.continuous) {
+        this.initSession();
+        this.recognition.start();
+      }
     };
   }
 
