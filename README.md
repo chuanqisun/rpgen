@@ -1,2 +1,3 @@
-# park
-Personal AI Research Kernel
+# AI Bar
+
+Multi-modal AI client app starter kit
