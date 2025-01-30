@@ -13,7 +13,7 @@ export class DragNode extends HTMLElement {
       } 
     }
     </style>
-    <button>⣿</button>
+    <button>🤚</button>
     `
   );
 
