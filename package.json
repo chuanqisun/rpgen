@@ -14,6 +14,7 @@
     "vite": "^6.0.11"
   },
   "dependencies": {
+    "natural-kit": "^0.0.3",
     "openai": "^4.81.0",
     "rxjs": "^7.8.1"
   }
