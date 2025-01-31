@@ -19,11 +19,13 @@
       <hide-node auto-hide="5"></hide-node>
     </ai-bar>
 
-    <button data-action="test-chat">Test chat</button>
-    <button data-action="test-azure-tts">Test azure tts</button>
-    <button data-action="test-web-tts">Test web tts</button>
-    <button data-action="test-azure-stt">Test azure stt</button>
-    <button data-action="test-web-stt">Test web stt</button>
+    <sim-world width="16" height="16">
+      <sim-npc name="anna" x="3" y="5"></sim-npc>
+      <sim-player name="jake" x="8" y="8"></sim-player>
+    </sim-world>
+
+    <textarea id="world-editor" readonly></textarea>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

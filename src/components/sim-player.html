@@ -1,0 +1,26 @@
+<style>
+  .container {
+    position: absolute;
+    display: grid;
+    transform: translate(var(--x), var(--y));
+  }
+
+  textarea {
+    field-sizing: content;
+    resize: none;
+    border: 1px solid currentColor;
+    padding: 4px;
+  }
+
+  .avatar {
+    font-size: 32px;
+  }
+
+  [hidden] {
+    display: none;
+  }
+</style>
+<div class="container">
+  <span class="avatar">🙂</span>
+  <textarea hidden></textarea>
+</div>

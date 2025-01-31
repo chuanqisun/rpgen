@@ -4,3 +4,9 @@
 
   color-scheme: light dark;
 }
+
+textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 200px;
+}
