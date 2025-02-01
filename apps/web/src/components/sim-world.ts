@@ -1,3 +1,4 @@
+import { startParty } from "../p2p";
 import { useShadow } from "../utils/use-shadow";
 import { SCALE_FACTOR } from "./shared/constant";
 import template from "./sim-world.html?raw";
@@ -7,6 +8,8 @@ export interface Interactable {
   stop: () => void;
 }
 
+export const conn = startParty();
+
 export class SimWorld extends HTMLElement {
   shadowRoot = useShadow(this, template);
   simBox = this.shadowRoot.querySelector<HTMLElement>(".sim-box")!;
@@ -15,10 +18,34 @@ export class SimWorld extends HTMLElement {
     this.simBox.style.setProperty("--width", `${Number(this.getAttribute("width")) * SCALE_FACTOR}px`);
     this.simBox.style.setProperty("--height", `${Number(this.getAttribute("height")) * SCALE_FACTOR}px`);
 
+    let lastWorldState = "";
+
     const observer = new MutationObserver(() => {
+      if (lastWorldState === this.outerHTML) return;
+      lastWorldState = this.outerHTML;
+      const player = document.querySelector("sim-player") as HTMLElement;
+      const x = Number(player.getAttribute("x"));
+      const y = Number(player.getAttribute("y"));
+      conn.send(JSON.stringify({ type: "coord", x, y }));
       this.dispatchEvent(new Event("worldchanged"));
     });
     observer.observe(this, { subtree: true, attributes: true, childList: true });
+
+    conn.addEventListener("message", (event) => {
+      // message format: <uuid>: <json-string>
+      try {
+        const jsonString = event.data.slice(event.data.indexOf(":") + 1).trim();
+        console.log("will parse", jsonString);
+        const { type, x, y } = JSON.parse(jsonString);
+        if (type === "coord") {
+          const npc = document.querySelector("sim-npc") as HTMLElement;
+          npc.setAttribute("x", x);
+          npc.setAttribute("y", y);
+        }
+      } catch (e) {
+        // noop
+      }
+    });
   }
 
   getNearestObjects(

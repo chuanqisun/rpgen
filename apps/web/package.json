@@ -1,0 +1,23 @@
+{
+  "name": "park",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "vite": "^6.0.11"
+  },
+  "dependencies": {
+    "@types/js-beautify": "^1.14.3",
+    "js-beautify": "^1.15.1",
+    "natural-kit": "^0.0.3",
+    "openai": "^4.81.0",
+    "partysocket": "^1.0.3",
+    "rxjs": "^7.8.1"
+  }
+}
