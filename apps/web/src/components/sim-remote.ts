@@ -1,10 +1,10 @@
 import { system, user, type OpenAILlmNode } from "natural-kit";
 import { useShadow } from "../utils/use-shadow";
 import { SCALE_FACTOR } from "./shared/constant";
-import template from "./sim-npc.html?raw";
+import template from "./sim-remote.html?raw";
 import type { Interactable } from "./sim-world";
 
-export class SimNpc extends HTMLElement implements Interactable {
+export class SimRemote extends HTMLElement implements Interactable {
   static observedAttributes = ["x", "y"];
 
   shadowRoot = useShadow(this, template);
@@ -71,6 +71,6 @@ Respond to the player in one short colloquial utterance. Do NOT use any emoji in
 }
 
 export function defineSimNpc() {
-  if (customElements.get("sim-npc")) return;
-  customElements.define("sim-npc", SimNpc);
+  if (customElements.get("sim-remote")) return;
+  customElements.define("sim-remote", SimRemote);
 }

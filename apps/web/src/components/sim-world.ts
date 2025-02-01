@@ -36,7 +36,7 @@ export class SimWorld extends HTMLElement {
               existingPlayer.setAttribute("name", name);
               existingPlayer.setAttribute("avatar", avatar);
             } else {
-              const player = document.createElement("sim-npc");
+              const player = document.createElement("sim-remote");
               player.setAttribute("player", id);
               player.setAttribute("x", x);
               player.setAttribute("y", y);

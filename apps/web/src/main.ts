@@ -1,7 +1,7 @@
 import { html_beautify } from "js-beautify";
 import { loadAIBar } from "natural-kit";
-import { defineSimNpc } from "./components/sim-npc";
 import { defineSimPlayer } from "./components/sim-player";
+import { defineSimNpc } from "./components/sim-remote";
 import { defineSimWorld } from "./components/sim-world";
 import "./style.css";
 
