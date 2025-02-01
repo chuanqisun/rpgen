@@ -24,9 +24,25 @@ export class SimPlayer extends HTMLElement {
         break;
       }
     }
+    this.broadcastLocation();
+  }
+
+  private broadcastLocation() {
+    const x = Number(this.getAttribute("x"));
+    const y = Number(this.getAttribute("y"));
+    const conn = this.closest<SimWorld>("sim-world")!.conn;
+    const id = conn.id;
+    this.setAttribute("player", id);
+    const name = this.getAttribute("name");
+    const avatar = this.getAttribute("avatar");
+    conn.send(JSON.stringify({ type: "location", x, y, id, name, avatar }));
   }
 
   connectedCallback() {
+    setInterval(() => {
+      this.broadcastLocation();
+    }, 1000);
+
     this.closest<SimWorld>("sim-world")?.addEventListener("worldchanged", () => {
       console.log("worldchanged");
       const nearest = (this.closest<SimWorld>("sim-world")?.getNearestObjects(this, { maxGridDistance: 1 }) ?? []).at(0);

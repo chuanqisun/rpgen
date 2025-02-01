@@ -8,42 +8,54 @@ export interface Interactable {
   stop: () => void;
 }
 
-export const conn = startParty();
-
 export class SimWorld extends HTMLElement {
   shadowRoot = useShadow(this, template);
   simBox = this.shadowRoot.querySelector<HTMLElement>(".sim-box")!;
+  conn = startParty();
 
   connectedCallback() {
     this.simBox.style.setProperty("--width", `${Number(this.getAttribute("width")) * SCALE_FACTOR}px`);
     this.simBox.style.setProperty("--height", `${Number(this.getAttribute("height")) * SCALE_FACTOR}px`);
 
-    let lastWorldState = "";
-
     const observer = new MutationObserver(() => {
-      if (lastWorldState === this.outerHTML) return;
-      lastWorldState = this.outerHTML;
-      const player = document.querySelector("sim-player") as HTMLElement;
-      const x = Number(player.getAttribute("x"));
-      const y = Number(player.getAttribute("y"));
-      conn.send(JSON.stringify({ type: "coord", x, y }));
       this.dispatchEvent(new Event("worldchanged"));
     });
     observer.observe(this, { subtree: true, attributes: true, childList: true });
 
-    conn.addEventListener("message", (event) => {
-      // message format: <uuid>: <json-string>
+    // render remote peers
+    this.conn.addEventListener("message", (event) => {
       try {
-        const jsonString = event.data.slice(event.data.indexOf(":") + 1).trim();
-        console.log("will parse", jsonString);
-        const { type, x, y } = JSON.parse(jsonString);
-        if (type === "coord") {
-          const npc = document.querySelector("sim-npc") as HTMLElement;
-          npc.setAttribute("x", x);
-          npc.setAttribute("y", y);
+        const { type, x, y, id, name, avatar } = JSON.parse(event.data) as Record<string, any>;
+        switch (type) {
+          case "location": {
+            const existingPlayer = this.querySelector(`[player="${id}"]`);
+
+            if (existingPlayer) {
+              existingPlayer.setAttribute("x", x);
+              existingPlayer.setAttribute("y", y);
+              existingPlayer.setAttribute("name", name);
+              existingPlayer.setAttribute("avatar", avatar);
+            } else {
+              const player = document.createElement("sim-npc");
+              player.setAttribute("player", id);
+              player.setAttribute("x", x);
+              player.setAttribute("y", y);
+              player.setAttribute("name", name);
+              player.setAttribute("avatar", avatar);
+              this.appendChild(player);
+            }
+            break;
+          }
+          case "leave": {
+            const player = this.querySelector(`[player="${id}"]`);
+            if (player) {
+              player.remove();
+            }
+            break;
+          }
         }
-      } catch (e) {
-        // noop
+      } catch (error) {
+        console.warn("error handling message", event.data);
       }
     });
   }
