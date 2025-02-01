@@ -5,7 +5,7 @@ import template from "./sim-player.html?raw";
 import type { Interactable, SimWorld } from "./sim-world";
 
 export class SimPlayer extends HTMLElement {
-  static observedAttributes = ["x", "y"];
+  static observedAttributes = ["name", "avatar", "x", "y"];
 
   shadowRoot = useShadow(this, template);
   container = this.shadowRoot.querySelector(".container") as HTMLElement;
@@ -23,6 +23,10 @@ export class SimPlayer extends HTMLElement {
         this.container.style.setProperty("--y", `${Number(newValue) * SCALE_FACTOR}px`);
         break;
       }
+      case "avatar": {
+        this.container.querySelector(".avatar")!.textContent = newValue;
+        break;
+      }
     }
     this.broadcastLocation();
   }
@@ -30,7 +34,8 @@ export class SimPlayer extends HTMLElement {
   private broadcastLocation() {
     const x = Number(this.getAttribute("x"));
     const y = Number(this.getAttribute("y"));
-    const conn = this.closest<SimWorld>("sim-world")!.conn;
+    const conn = this.closest<SimWorld>("sim-world")?.conn;
+    if (!conn) return;
     const id = conn.id;
     this.setAttribute("player", id);
     const name = this.getAttribute("name");

@@ -5,7 +5,7 @@ import template from "./sim-remote.html?raw";
 import type { Interactable } from "./sim-world";
 
 export class SimRemote extends HTMLElement implements Interactable {
-  static observedAttributes = ["x", "y"];
+  static observedAttributes = ["avatar", "name", "x", "y"];
 
   shadowRoot = useShadow(this, template);
   container = this.shadowRoot.querySelector(".container") as HTMLImageElement;
@@ -13,7 +13,7 @@ export class SimRemote extends HTMLElement implements Interactable {
   memory = [] as string[];
 
   connectedCallback() {
-    this.container.querySelector(".avatar")!.textContent = this.getAttribute("avatar") ?? "🤖";
+    this.container.querySelector(".avatar")!.textContent = this.getAttribute("avatar") ?? "❓";
   }
 
   attributeChangedCallback(name: string, _oldValue: any, newValue: any) {
@@ -24,6 +24,10 @@ export class SimRemote extends HTMLElement implements Interactable {
       }
       case "y": {
         this.container.style.setProperty("--y", `${Number(newValue) * SCALE_FACTOR}px`);
+        break;
+      }
+      case "avatar": {
+        this.container.querySelector(".avatar")!.textContent = newValue;
         break;
       }
     }
@@ -70,7 +74,7 @@ Respond to the player in one short colloquial utterance. Do NOT use any emoji in
   }
 }
 
-export function defineSimNpc() {
+export function defineSimRemote() {
   if (customElements.get("sim-remote")) return;
   customElements.define("sim-remote", SimRemote);
 }

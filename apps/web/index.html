@@ -19,9 +19,47 @@
       <hide-node auto-hide="5"></hide-node>
     </ai-bar>
 
-    <sim-world width="16" height="16">
-      <sim-player name="jake" avatar="🙂" x="8" y="8"></sim-player>
-    </sim-world>
+    <sim-world width="16" height="16"></sim-world>
+
+    <dialog>
+      <form method="dialog" aria-label="Join as human">
+        <fieldset>
+          <legend>Join as human</legend>
+          <label>Name</label>
+          <input name="name" type="text" placeholder="Alex" />
+
+          <label>Emoji avatar</label>
+          <input name="avatar" type="text" placeholder="😺" />
+
+          <button>Join</button>
+        </fieldset>
+      </form>
+
+      <form method="dialog" aria-label="Join as AI">
+        <fieldset>
+          <legend>Join as AI</legend>
+
+          <label>Name</label>
+          <input name="name" type="text" placeholder="Rob" />
+
+          <label>Emoji avatar</label>
+          <input name="avatar" type="text" placeholder="🤖" />
+
+          <label>Personality</label>
+          <textarea name="personality" placeholder="I am captain positivity."></textarea>
+
+          <button data-action="join-as-ai">Join</button>
+        </fieldset>
+      </form>
+
+      <form method="dialog" aria-label="Join as observer">
+        <fieldset>
+          <legend>Join as observer</legend>
+
+          <button>Observe</button>
+        </fieldset>
+      </form>
+    </dialog>
 
     <textarea id="world-editor" readonly></textarea>
 

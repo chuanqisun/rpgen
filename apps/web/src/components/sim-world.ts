@@ -17,10 +17,13 @@ export class SimWorld extends HTMLElement {
     this.simBox.style.setProperty("--width", `${Number(this.getAttribute("width")) * SCALE_FACTOR}px`);
     this.simBox.style.setProperty("--height", `${Number(this.getAttribute("height")) * SCALE_FACTOR}px`);
 
-    const observer = new MutationObserver(() => {
+    let key = "";
+    new MutationObserver((e) => {
+      const newKey = this.outerHTML;
+      if (key === newKey) return;
+      key = newKey;
       this.dispatchEvent(new Event("worldchanged"));
-    });
-    observer.observe(this, { subtree: true, attributes: true, childList: true });
+    }).observe(this, { childList: true, attributes: true, subtree: true });
 
     // render remote peers
     this.conn.addEventListener("message", (event) => {
@@ -60,6 +63,18 @@ export class SimWorld extends HTMLElement {
     });
   }
 
+  joinAsPlayer(options?: { name?: string; avatar?: string }) {
+    const player = document.createElement("sim-player");
+    player.setAttribute("player", this.conn.id);
+    player.setAttribute("x", "0");
+    player.setAttribute("y", "0");
+    player.setAttribute("name", options?.name?.trim() ? options.name : `Player-${Date.now()}`);
+    player.setAttribute("avatar", options?.avatar?.trim() ? options?.avatar?.trim() : getRandomAvatar());
+    this.appendChild(player);
+  }
+
+  joinAsAI(options?: { name?: string; avatar?: string; personality?: string }) {}
+
   getNearestObjects(
     self: HTMLElement,
     options?: {
@@ -89,6 +104,41 @@ export class SimWorld extends HTMLElement {
 
     return objectsWithGridDistance.slice(0, 1).map((object) => object.child as HTMLElement & Interactable);
   }
+}
+
+function getRandomAvatar() {
+  const avatars = [
+    "👤",
+    "👽",
+    "🤖",
+    "🦄",
+    "🐉",
+    "🐲",
+    "🐳",
+    "🦜",
+    "🦚",
+    "🦢",
+    "🦩",
+    "🦤",
+    "🦧",
+    "🦥",
+    "🦦",
+    "🦨",
+    "🦭",
+    "🦪",
+    "🦫",
+    "🦮",
+    "🦯",
+    "🦸",
+    "🦹",
+    "🦺",
+    "🦻",
+    "🦼",
+    "🦽",
+    "🦾",
+    "🦿",
+  ];
+  return avatars[Math.floor(Math.random() * avatars.length)];
 }
 
 export function defineSimWorld() {

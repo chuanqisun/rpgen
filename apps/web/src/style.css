@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 :root {
   font-family: monospace;
   line-height: 1.5;
@@ -7,6 +11,20 @@
 
 textarea {
   width: 100%;
-  resize: vertical;
-  min-height: 200px;
+  resize: none;
+  min-height: 40px;
+  field-sizing: content;
+}
+
+fieldset {
+  display: grid;
+  gap: 0.25rem;
+}
+
+dialog {
+  width: calc(100% - 4rem);
+  max-width: 40rem;
+
+  height: calc(100% - 4rem);
+  max-height: 40rem;
 }
