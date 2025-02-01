@@ -2,6 +2,11 @@ import { useShadow } from "../utils/use-shadow";
 import { SCALE_FACTOR } from "./shared/constant";
 import template from "./sim-world.html?raw";
 
+export interface Interactable {
+  start: (options: { other: HTMLElement; prompt: string }) => Promise<void>;
+  stop: () => void;
+}
+
 export class SimWorld extends HTMLElement {
   shadowRoot = useShadow(this, template);
   simBox = this.shadowRoot.querySelector<HTMLElement>(".sim-box")!;
@@ -9,6 +14,11 @@ export class SimWorld extends HTMLElement {
   connectedCallback() {
     this.simBox.style.setProperty("--width", `${Number(this.getAttribute("width")) * SCALE_FACTOR}px`);
     this.simBox.style.setProperty("--height", `${Number(this.getAttribute("height")) * SCALE_FACTOR}px`);
+
+    const observer = new MutationObserver(() => {
+      this.dispatchEvent(new Event("worldchanged"));
+    });
+    observer.observe(this, { subtree: true, attributes: true, childList: true });
   }
 
   getNearestObjects(
@@ -38,7 +48,7 @@ export class SimWorld extends HTMLElement {
       .filter((object) => object.gridDistance <= maxGridDistance)
       .sort((a, b) => a.gridDistance - b.gridDistance); // from closest to farthest
 
-    return objectsWithGridDistance.slice(0, 1).map((object) => object.child);
+    return objectsWithGridDistance.slice(0, 1).map((object) => object.child as HTMLElement & Interactable);
   }
 }
 
